@@ -49,16 +49,5 @@ public class DataEventProcess extends AbstractEventProcess {
     @Override
     protected void process(TableData tableData) {
         logger.info(" 得到的转换数据 : " + JSON.toJSONString(tableData));
-//
-//
-//        ProducerRecord<String, String> kafkaMessage = new ProducerRecord<String, String>("prod_rds", null, , JSON
-//                .toJSONString(tableData), null);
-////        producer.flush();
-//        Future<RecordMetadata> recordMetadataFuture = kafkaProducer.send(kafkaMessage);
-//        try {
-//            logger.info(" 返回结果 : " + recordMetadataFuture.get());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
     }
 }

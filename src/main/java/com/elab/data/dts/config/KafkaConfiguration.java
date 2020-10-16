@@ -22,7 +22,6 @@ import java.util.Properties;
  */
 @Configuration
 @EnableConfigurationProperties(KafkaProperties.class)
-//@Profile(value = {"test", "uat", "com"})
 public class KafkaConfiguration {
 
     //    @Value("${spring.kafka.bootstrap-servers}")
@@ -38,8 +37,8 @@ public class KafkaConfiguration {
     @Value("${spring.profiles.active}")
     private String profiles;
 
-//    @Value("${spring.kafka.ssl.truststore-location}")
-//    private String truststoreLocation;
+    @Value("${java.security.auth.login.truststore-location}")
+    private String truststoreLocation;
 
     @Bean
     public KafkaProducer<String, String> kafkaProducer(@Autowired KafkaProperties kafkaProperties) {
@@ -58,14 +57,13 @@ public class KafkaConfiguration {
         props.put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, "");
         if ("dev".equals(profiles)) {
             // 外网配置
-            props.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, "E:/temp/java/kafka.client.truststore.jks");
+            props.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, truststoreLocation);
             props.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, "KafkaOnsClient");
             props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_SSL");
             //SASL鉴权方式，保持不变
             props.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
-            System.setProperty("java.security.auth.login.config", "E:/temp/java/kafka_client_jaas.conf");
+            System.setProperty("java.security.auth.login.config", authLoginConfig);
         }
-
         //构造 Producer 对象，注意，该对象是线程安全的。
         //一般来说，一个进程内一个 Producer 对象即可。如果想提高性能，可构造多个对象，但最好不要超过 5 个
         KafkaProducer<String, String> producer = new KafkaProducer<String, String>(props);

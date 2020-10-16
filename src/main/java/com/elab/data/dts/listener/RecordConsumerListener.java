@@ -34,9 +34,7 @@ public class RecordConsumerListener implements RecordListener {
                 }
             });
             // 提交消费位点
-//            logger.info("消费位点 : " + String.valueOf(record.getSourceTimestamp()) + "\t" + record.getId());
             userRecord.commit(String.valueOf(record.getSourceTimestamp()));
-            // Thread.sleep(1000);
         } catch (Exception e) {
             logger.error("消费失败", e);
         }
