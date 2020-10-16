@@ -1,0 +1,35 @@
+server:
+  port: 8686
+spring:
+  profiles:
+    active: dev
+#  dts:
+#    username: xxx
+#    password: xxxx
+#    sid-name: dtsbvvh9l6w22o8bhm
+#    group-name: temp_jinmao_data
+#    kafka-broker-url-name: dts-cn-shanghai.aliyuncs.com:18001
+#    kafka-topic: xxxx
+#    initial-checkpoint-name: 1596440543
+#    use-config-checkpoint-name: true
+#    subscribe-mode-name: subscribe
+#    max-poll-records: 100
+#  kafka:
+#    bootstrap-servers: xxxx:9093,xxxx:9093,xxxx:9093
+##    ssl:
+##      trust-store-location: E:/temp/java/kafka.client.truststore.jks
+##      trust-store-password: KafkaOnsClient
+#    producer:
+#      security:
+#        protocol: SASL_SSL
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+#    properties:
+#      partition: 12
+#    template:
+#      default-topic: prod_rds
+#java:
+#  security:
+#    auth:
+#      login:
+#        config: E:/temp/java/kafka_client_jaas.conf

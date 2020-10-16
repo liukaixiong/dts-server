@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <jmxConfigurator/>
+    <property name="LOG_PATH" value="logs"/>
+    <property name="APPLICATION" value="dts-server" />
+
+    <appender name="elab-marketing-info" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_PATH}/${APPLICATION}.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/%d{yyyyMMdd}/${APPLICATION}-%d{yyyyMMdd}-%i.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>30GB</totalSizeCap>
+            <maxFileSize>100MB</maxFileSize>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - [%file:%line] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 通过异步来提升写入效率 -->
+    <appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>0</discardingThreshold>
+        <queueSize>10000</queueSize>
+        <appender-ref ref="elab-marketing-info"/>
+        <neverBlock>true</neverBlock>
+    </appender>
+
+    <appender name="ERROR_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 过滤日志 -->
+        <File>${LOG_PATH}/${APPLICATION}-error.log</File>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <encoder>
+            <pattern>
+                %msg%n
+            </pattern>
+        </encoder>
+        <!-- 滚动策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/error/%d{yyyyMMdd}/${APPLICATION}-%d{yyyyMMdd}-%i.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>30GB</totalSizeCap>
+            <maxFileSize>100MB</maxFileSize>
+        </rollingPolicy>
+    </appender>
+
+    <!--<appender name="cat" class="com.elab.log.log4j.CatLogbackLog"></appender>-->
+
+    <root level="INFO">
+        <appender-ref ref="ASYNC_FILE"/>
+        <!--<appender-ref ref="cat"/>-->
+        <appender-ref ref="ERROR_LOG"/>
+    </root>
+    <!--<logger name="com.elab" level="DEBUG" />-->
+</configuration>
