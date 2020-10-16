@@ -51,30 +51,34 @@
 
 ```json
 {
-    "changeFieldList":[								// 修改的字段名
-        "updated"	
+"changeFieldList":[                                // 修改的字段名
+        "updated"
     ],
-    "databaseName":"databseName",					 // 数据库名称
+    "databaseName":"databseName",                  // 数据库名称
     "fieldDataMap":{
         "id":{
-            "dataType":"java.lang.Integer",			  // 数据类型
-            "field":"id",							// 字段名称
-            "oldValue":"502941",					 // 老的字段
-            "value":"502941"						 // 当前字段
+            "dataType":"java.lang.Integer",        // 数据类型
+            "field":"id",                          // 字段名称
+            "oldValue":"502941",                   // 老的字段
+            "value":"502941"                       // 当前字段
         },
         "updated":{
             "dataType":"java.util.Date",
-            "field":"updated",			
+            "field":"updated",
             "oldValue":"2020-10-16 11:30:06",
             "value":"2020-10-16 11:35:06"
         }
     },
-    "operation":"UPDATE",							// 操作类型 UPDATE、INSERT、DELETE等等
-    "sourceTimestamp":1602819306,					 // 触发时间戳
-    "tableName":"table_info"						// 表名
+    "operation":"UPDATE",                         // 操作类型 UPDATE、INSERT、DELETE等等
+    "sourceTimestamp":1602819306,                 // 触发时间戳
+    "tableName":"table_info"                      // 表名
 }
 ```
 
 
 
 如果有需要可以在这个基础上进行二次开发，节省更多时间。
+
+**后续还会将一些dts使用心得分享处理,会持续更新.**
+
+**欢迎大家一起交流**
