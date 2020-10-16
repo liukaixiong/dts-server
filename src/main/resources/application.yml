@@ -16,8 +16,6 @@ spring:
 #    max-poll-records: 100
 #  kafka:
 #    bootstrap-servers: xxxx:9093,xxxx:9093,xxxx:9093
-##    ssl:
-##      trust-store-location: E:/temp/java/kafka.client.truststore.jks
 ##      trust-store-password: KafkaOnsClient
 #    producer:
 #      security:
@@ -32,4 +30,5 @@ spring:
 #  security:
 #    auth:
 #      login:
-#        config: E:/temp/java/kafka_client_jaas.conf
+#        config: E:/temp/java/kafka_client_jaas.conf                     # 基于阿里云提供的
+#        trust-store-location: E:/temp/java/kafka.client.truststore.jks  # 基于阿里云提供参考 : https://help.aliyun.com/document_detail/99958.html?spm=a2c4g.11186623.2.14.4c2a30f0KEj6Av#concept-99958-zh

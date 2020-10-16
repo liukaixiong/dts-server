@@ -28,7 +28,9 @@
 
 **其他的基本和案例保持一致**
 
+> 另外可能需要看一下application.yml配置,将你的应用的一些环境配置上去. 如果涉及到环境切分的话
 
+> KafkaConfiguration代码中有一个环境变量的配置: dev  如果了解环境切分的可以新增一个application-dev.yml的环境里面配置ssl相关的参数
 
 ## 代码流程介绍
 
