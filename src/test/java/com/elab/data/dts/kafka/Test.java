@@ -73,7 +73,7 @@ public class Test {
     private static Properties getProperties1() {
         Properties props = new Properties();
         //设置接入点，请通过控制台获取对应Topic的接入点。
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "47.103.15.48:9093,47.103.17.231:9093,47.103.23.79:9093");
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9093");
 
         //Kafka消息的序列化方式。
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
