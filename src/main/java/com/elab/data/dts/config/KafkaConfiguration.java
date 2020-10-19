@@ -37,7 +37,7 @@ public class KafkaConfiguration {
     @Value("${spring.profiles.active}")
     private String profiles;
 
-    @Value("${java.security.auth.login.truststore-location}")
+    @Value("${java.security.auth.login.trust-store-location}")
     private String truststoreLocation;
 
     @Bean
@@ -66,7 +66,6 @@ public class KafkaConfiguration {
         }
         //构造 Producer 对象，注意，该对象是线程安全的。
         //一般来说，一个进程内一个 Producer 对象即可。如果想提高性能，可构造多个对象，但最好不要超过 5 个
-        KafkaProducer<String, String> producer = new KafkaProducer<String, String>(props);
-        return producer;
+        return new KafkaProducer<String, String>(props);
     }
 }
