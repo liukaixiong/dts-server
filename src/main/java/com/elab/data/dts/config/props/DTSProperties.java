@@ -2,6 +2,9 @@ package com.elab.data.dts.config.props;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * dts数据订阅属性
  *
@@ -55,6 +58,14 @@ public class DTSProperties {
      * 拉取的超时时间
      */
     private Integer maxPollIntervalMs = 30000;
+    /**
+     * 包括的数据库信息
+     */
+    private Map<String, List<String>> includeDataInfo;
+    /**
+     * 排除的数据库信息
+     */
+    private Map<String, List<String>> excludeDataInfo;
 
     public Integer getMaxPollIntervalMs() {
         return maxPollIntervalMs;
@@ -142,5 +153,21 @@ public class DTSProperties {
 
     public void setSubscribeModeName(String subscribeModeName) {
         this.subscribeModeName = subscribeModeName;
+    }
+
+    public Map<String, List<String>> getIncludeDataInfo() {
+        return includeDataInfo;
+    }
+
+    public void setIncludeDataInfo(Map<String, List<String>> includeDataInfo) {
+        this.includeDataInfo = includeDataInfo;
+    }
+
+    public Map<String, List<String>> getExcludeDataInfo() {
+        return excludeDataInfo;
+    }
+
+    public void setExcludeDataInfo(Map<String, List<String>> excludeDataInfo) {
+        this.excludeDataInfo = excludeDataInfo;
     }
 }

@@ -54,7 +54,6 @@ public class KafkaConfiguration {
         props.put(ProducerConfig.RETRIES_CONFIG, 5);
         //设置客户端内部重试间隔。
         props.put(ProducerConfig.RECONNECT_BACKOFF_MS_CONFIG, 3000);
-        props.put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, "");
         if ("dev".equals(profiles)) {
             // 外网配置
             props.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, truststoreLocation);
@@ -63,6 +62,7 @@ public class KafkaConfiguration {
             //SASL鉴权方式，保持不变
             props.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
             System.setProperty("java.security.auth.login.config", authLoginConfig);
+            props.put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, "");
         }
         //构造 Producer 对象，注意，该对象是线程安全的。
         //一般来说，一个进程内一个 Producer 对象即可。如果想提高性能，可构造多个对象，但最好不要超过 5 个

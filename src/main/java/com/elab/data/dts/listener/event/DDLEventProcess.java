@@ -24,4 +24,5 @@ public class DDLEventProcess extends AbstractEventProcess {
     protected TableData parseTable(UserRecord record) {
         return DataParseUtils.parseDDL(record.getRecord());
     }
+
 }

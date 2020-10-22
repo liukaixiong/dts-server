@@ -5,7 +5,7 @@
     <property name="LOG_PATH" value="logs"/>
     <property name="APPLICATION" value="dts-server" />
 
-    <appender name="elab-marketing-info" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="dts-server" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>${LOG_PATH}/${APPLICATION}.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${LOG_PATH}/%d{yyyyMMdd}/${APPLICATION}-%d{yyyyMMdd}-%i.log</fileNamePattern>
@@ -22,7 +22,7 @@
     <appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">
         <discardingThreshold>0</discardingThreshold>
         <queueSize>10000</queueSize>
-        <appender-ref ref="elab-marketing-info"/>
+        <appender-ref ref="dts-server"/>
         <neverBlock>true</neverBlock>
     </appender>
 

@@ -10,6 +10,9 @@ import com.elab.data.dts.model.DMLData;
 import com.elab.data.dts.model.FieldData;
 import com.elab.data.dts.model.TableData;
 import com.elab.data.dts.recordprocessor.FieldConverter;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -21,7 +24,7 @@ import java.util.*;
  */
 public class DataParseUtils {
     private static final FieldConverter FIELD_CONVERTER = FieldConverter.getConverter("mysql", null);
-
+    private static Logger LOG = LoggerFactory.getLogger(DataParseUtils.class);
 
     private static Class[] fieldClass = new Class[256];
 
@@ -118,9 +121,9 @@ public class DataParseUtils {
                     fieldData.setValue(afterValue);
                 }
 
-                if (toPrintAfter != null) {
-                    if (toPrintBefore != null) {
-                        if (!toPrintAfter.equals(toPrintBefore)) {
+                if (fieldData.getValue() != null) {
+                    if (fieldData.getOldValue() != null) {
+                        if (!fieldData.getValue().equals(fieldData.getOldValue())) {
                             changeFieldList.add(field.getName());
                         }
                     } else {
@@ -134,7 +137,7 @@ public class DataParseUtils {
     }
 
 
-    private static void parseDatabaseInfo(Record record, TableData tableData) {
+    public static void parseDatabaseInfo(Record record, TableData tableData) {
         String dbName = null;
         String tableName = null;
         // here we get db and table name
@@ -182,10 +185,12 @@ public class DataParseUtils {
      * @return
      */
     public static DDLData parseDDL(Record record) {
+        String ddlSQL = record.getAfterImages().toString();
         DDLData ddlData = new DDLData();
         parseDatabaseInfo(record, ddlData);
-        ddlData.setSql(record.getAfterImages().toString());
+        ddlData.setSql(ddlSQL);
         ddlData.setOperation(record.getOperation());
+        ddlData.setTableName(getDDLTableName(ddlSQL));
         ddlData.setSourceTimestamp(record.getSourceTimestamp());
         return ddlData;
     }
@@ -209,6 +214,36 @@ public class DataParseUtils {
      */
     public static Class getFieldType(int typeNumber) {
         return fieldClass[typeNumber];
+    }
+
+    /**
+     * 获取DDL中的表名
+     *
+     * @param ddlSql
+     * @return
+     */
+    public static String getDDLTableName(String ddlSql) {
+        String tableName = null;
+        try {
+            if (StringUtils.isEmpty(ddlSql)) {
+                return null;
+            }
+            int startIndex = 0;
+            int endIndex = 0;
+
+            if (ddlSql.indexOf("ADD INDEX") > -1) {
+                startIndex = ddlSql.indexOf("`") + 1;
+                endIndex = ddlSql.indexOf("` ");
+            } else {
+                startIndex = ddlSql.indexOf(".`") + 2;
+                endIndex = ddlSql.indexOf("` ");
+            }
+
+            tableName = ddlSql.substring(startIndex, endIndex);
+        } catch (Exception e) {
+            LOG.error("解析DDLSQL失败:" + ddlSql, e);
+        }
+        return tableName;
     }
 
 }

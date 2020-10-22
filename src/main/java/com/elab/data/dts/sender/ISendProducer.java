@@ -9,7 +9,12 @@ import com.elab.data.dts.model.TableData;
  * @time ： 2020/9/23 - 15:14
  */
 public interface ISendProducer {
-
-    public void send(TableData tableData);
+    /**
+     * 发送数据
+     *
+     * @param tableData
+     * @throws Exception
+     */
+    public void send(TableData tableData) throws Exception;
 
 }

@@ -2,6 +2,7 @@ package com.elab.data.dts.listener;
 
 import com.elab.data.dts.common.RecordListener;
 import com.elab.data.dts.common.UserRecord;
+import com.elab.data.dts.config.props.DTSProperties;
 import com.elab.data.dts.formats.avro.Record;
 import com.elab.data.dts.listener.event.AbstractEventProcess;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 消费dts的数据监听器
@@ -24,15 +26,19 @@ public class RecordConsumerListener implements RecordListener {
     @Autowired
     private List<AbstractEventProcess> eventProcessList;
 
+    @Autowired
+    private DTSProperties dtsProperties;
+
     @Override
     public void consume(UserRecord userRecord) {
         try {
             Record record = userRecord.getRecord();
-            eventProcessList.forEach((V) -> {
-                if (V.subscription(record.getOperation())) {
-                    V.processEvent(userRecord);
+            for (int i = 0; i < eventProcessList.size(); i++) {
+                AbstractEventProcess abstractEventProcess = eventProcessList.get(i);
+                if(abstractEventProcess.subscription(record.getOperation())) {
+                    abstractEventProcess.processEvent(userRecord);
                 }
-            });
+            }
             // 提交消费位点
             userRecord.commit(String.valueOf(record.getSourceTimestamp()));
         } catch (Exception e) {

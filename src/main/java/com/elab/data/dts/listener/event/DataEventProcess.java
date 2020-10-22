@@ -2,6 +2,7 @@ package com.elab.data.dts.listener.event;
 
 import com.alibaba.fastjson.JSON;
 import com.elab.data.dts.common.UserRecord;
+import com.elab.data.dts.config.props.DTSProperties;
 import com.elab.data.dts.formats.avro.Operation;
 import com.elab.data.dts.model.TableData;
 import com.elab.data.dts.sender.ISendProducer;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 修改事件触发
@@ -30,11 +32,13 @@ public class DataEventProcess extends AbstractEventProcess {
     @Autowired
     private KafkaSendProducer sendProducer;
 
+    @Autowired
+    private DTSProperties dtsProperties;
+
     @Override
     public boolean subscription(Operation operation) {
         return subscriptionList.contains(operation);
     }
-
 
     @Override
     protected TableData parseTable(UserRecord record) {
@@ -47,7 +51,30 @@ public class DataEventProcess extends AbstractEventProcess {
     }
 
     @Override
-    protected void process(TableData tableData) {
+    protected boolean process(TableData tableData) throws Exception {
+        Map<String, List<String>> excludeDataInfo = dtsProperties.getExcludeDataInfo();
+        if (isSubscriptionData(tableData, excludeDataInfo)) {
+            return false;
+        }
+
+        Map<String, List<String>> includeDataInfo = dtsProperties.getIncludeDataInfo();
+        if (!isSubscriptionData(tableData, includeDataInfo)) {
+            return false;
+        }
+
         logger.info(" 得到的转换数据 : " + JSON.toJSONString(tableData));
+        return true;
+    }
+
+    private boolean isSubscriptionData(TableData tableData, Map<String, List<String>> includeDataInfo) {
+        String databaseName = tableData.getDatabaseName();
+        String tableName = tableData.getTableName();
+        if (includeDataInfo != null) {
+            List<String> tables = includeDataInfo.get(databaseName);
+            if (tables != null && (tables.contains("all") || tables.contains(tableName))) {
+                return true;
+            }
+        }
+        return false;
     }
 }

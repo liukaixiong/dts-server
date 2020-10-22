@@ -1,7 +1,11 @@
 # 基于阿里云的DTS封装
 最近公司需要应用订阅阿里云RDS相关的binlog，[基于阿里云提供的案例subscribe_exampleale演化而来](https://github.com/LioRoger/subscribe_example)，重构成了SpringBoot、并且升级了相应的jar包，避免了很多版本上面带来的坑，还新增集成了新的客户端kafka、后续会考虑redis等等。
 
-另外还将binlog进行统一格式化封装。
+功能点:
+- binlog格式化
+- 数据过滤
+- 集成客户端kafka消息发送
+- 监控规则
 
 后续还会加强的功能点:
 
@@ -46,8 +50,6 @@
 
 - `DDLEventProcess` : 针对表的DDL操作进行回调处理
 - `DataEventProcess`: 针对表数据的增删改查回调处理
-
-
 
 ### binlog格式化模版
 
