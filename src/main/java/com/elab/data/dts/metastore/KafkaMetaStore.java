@@ -42,7 +42,7 @@ public class KafkaMetaStore implements MetaStore<Checkpoint> {
                                 value.toString() + " failed cause " + exception.getMessage(), exception);
                         ret.completeExceptionally(exception);
                     } else {
-                        log.info("KafkaMetaStore:Commit offset success for group[{}] topicPartition [{}] {}", group,
+                        log.debug("KafkaMetaStore:Commit offset success for group[{}] topicPartition [{}] {}", group,
                                 topicPartition, value);
                         ret.complete(value);
                     }

@@ -72,7 +72,7 @@ public class EtlRecordProcessor implements  Runnable, Closeable {
                 fetchFailedCount = 0;
                 final ConsumerRecord<byte[], byte[]> consumerRecord = toProcess;
                 record = fastDeserializer.deserialize(consumerRecord.value());
-                log.debug("EtlRecordProcessor: meet [{}] record type", record.getOperation());
+                //log.debug("EtlRecordProcessor: meet [{}] record type", record.getOperation());
                 for (RecordListener recordListener : recordListeners.values()) {
                     recordListener.consume(new UserRecord(new TopicPartition(consumerRecord.topic(), consumerRecord.partition()), consumerRecord.offset(), record, new UserCommitCallBack() {
                         @Override
@@ -93,7 +93,7 @@ public class EtlRecordProcessor implements  Runnable, Closeable {
     private void commit() {
         if (null != offsetCommitCallBack) {
             if (commitCheckpoint.getTopicPartition() != null && commitCheckpoint.getOffset() != -1) {
-                log.info("commit record with checkpoint {}", commitCheckpoint);
+                log.debug("commit record with checkpoint {}", commitCheckpoint);
                 offsetCommitCallBack.commit(commitCheckpoint.getTopicPartition(), commitCheckpoint.getTimeStamp(),
                         commitCheckpoint.getOffset(), commitCheckpoint.getInfo());
             }

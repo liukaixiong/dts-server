@@ -61,8 +61,7 @@ public class DataEventProcess extends AbstractEventProcess {
         if (!isSubscriptionData(tableData, includeDataInfo)) {
             return false;
         }
-
-        logger.info(" 得到的转换数据 : " + JSON.toJSONString(tableData));
+        logger.debug(" 得到的转换数据 : " + JSON.toJSONString(tableData));
         return true;
     }
 

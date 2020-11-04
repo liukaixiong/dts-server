@@ -3,7 +3,7 @@
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
     <jmxConfigurator/>
     <property name="LOG_PATH" value="logs"/>
-    <property name="APPLICATION" value="dts-server" />
+    <property name="APPLICATION" value="dts-server"/>
 
     <appender name="dts-server" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>${LOG_PATH}/${APPLICATION}.log</File>
@@ -46,12 +46,15 @@
         </rollingPolicy>
     </appender>
 
-    <!--<appender name="cat" class="com.elab.log.log4j.CatLogbackLog"></appender>-->
+    <!--    <appender name="cat" class="com.elab.log.log4j.CatLogbackLog"></appender>-->
 
     <root level="INFO">
         <appender-ref ref="ASYNC_FILE"/>
         <!--<appender-ref ref="cat"/>-->
         <appender-ref ref="ERROR_LOG"/>
     </root>
-    <!--<logger name="com.elab" level="DEBUG" />-->
+
+    <!--    <logger name="com.elab.data.dts" level="DEBUG" additivity="false">-->
+    <!--        <appender-ref ref="cat"/>-->
+    <!--    </logger>-->
 </configuration>

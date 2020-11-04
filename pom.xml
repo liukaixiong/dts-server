@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.4.RELEASE</version>
+        <version>2.1.6.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.elab.data.dts</groupId>
@@ -17,6 +17,7 @@
     <properties>
         <java.version>8</java.version>
         <!--<spring-boot.version>2.3.4.RELEASE</spring-boot.version>-->
+        <elab.version>2.0.5.1-SNAPSHOT</elab.version>
     </properties>
 
     <dependencies>
@@ -24,6 +25,33 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
+        <!-- 监控数据发送 -->
+<!--        <dependency>-->
+<!--            <groupId>com.jay.monitor.data</groupId>-->
+<!--            <artifactId>jay-monitor-data-client</artifactId>-->
+<!--            <version>1.0-SNAPSHOT</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>com.elab.core</groupId>-->
+<!--            <artifactId>elab-kafka</artifactId>-->
+<!--            <version>${elab.version}</version>-->
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <artifactId>spring-kafka</artifactId>-->
+<!--                    <groupId>org.springframework.kafka</groupId>-->
+<!--                </exclusion>-->
+<!--                <exclusion>-->
+<!--                    <artifactId>kafka-clients</artifactId>-->
+<!--                    <groupId>org.apache.kafka</groupId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>com.elab.log</groupId>-->
+<!--            <artifactId>elab-log</artifactId>-->
+<!--            <version>2.0.5.1-SNAPSHOT</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -45,14 +73,14 @@
             </exclusions>
         </dependency>
         <!--<dependency>-->
-            <!--<groupId>org.springframework.kafka</groupId>-->
-            <!--<artifactId>spring-kafka</artifactId>-->
-            <!--<version>2.2.0.BUILD-SNAPSHOT</version>-->
+        <!--<groupId>org.springframework.kafka</groupId>-->
+        <!--<artifactId>spring-kafka</artifactId>-->
+        <!--<version>2.2.0.BUILD-SNAPSHOT</version>-->
         <!--</dependency>-->
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
-            <version>2.3.0.RELEASE</version>
+            <version>2.2.7.RELEASE</version>
             <exclusions>
                 <exclusion>
                     <artifactId>kafka-clients</artifactId>

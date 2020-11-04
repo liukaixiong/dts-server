@@ -1,18 +1,21 @@
 package com.elab.data.dts.config;
 
 import org.apache.kafka.clients.CommonClientConfigs;
-import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.config.SslConfigs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.core.DefaultKafkaProducerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
 
-import java.util.Properties;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * kafka日志集成
@@ -22,6 +25,7 @@ import java.util.Properties;
  */
 @Configuration
 @EnableConfigurationProperties(KafkaProperties.class)
+@ConditionalOnMissingBean(value = {KafkaTemplate.class})
 public class KafkaConfiguration {
 
     //    @Value("${spring.kafka.bootstrap-servers}")
@@ -41,8 +45,8 @@ public class KafkaConfiguration {
     private String truststoreLocation;
 
     @Bean
-    public KafkaProducer<String, String> kafkaProducer(@Autowired KafkaProperties kafkaProperties) {
-        Properties props = new Properties();
+    public KafkaTemplate<String, String> kafkaTemplate(@Autowired KafkaProperties kafkaProperties) {
+        Map<String, Object> props = new LinkedHashMap<>();
         //设置接入点，请通过控制台获取对应 Topic 的接入点
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProperties.getBootstrapServers());
         //消息队列 Kafka 消息的序列化方式
@@ -54,7 +58,7 @@ public class KafkaConfiguration {
         props.put(ProducerConfig.RETRIES_CONFIG, 5);
         //设置客户端内部重试间隔。
         props.put(ProducerConfig.RECONNECT_BACKOFF_MS_CONFIG, 3000);
-        if ("dev".equals(profiles)) {
+        if (kafkaProperties.getSsl() != null && kafkaProperties.getSsl().getProtocol() != null && "SASL_SSL".equals(kafkaProperties.getSsl().getProtocol())) {
             // 外网配置
             props.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, truststoreLocation);
             props.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, "KafkaOnsClient");
@@ -66,6 +70,9 @@ public class KafkaConfiguration {
         }
         //构造 Producer 对象，注意，该对象是线程安全的。
         //一般来说，一个进程内一个 Producer 对象即可。如果想提高性能，可构造多个对象，但最好不要超过 5 个
-        return new KafkaProducer<String, String>(props);
+//        KafkaProducer<String, String> kafkaProducer = new KafkaProducer<>(props);
+        DefaultKafkaProducerFactory<String, String> producerFactory = new DefaultKafkaProducerFactory<String, String>(props);
+        KafkaTemplate<String, String> kafkaTemplate = new KafkaTemplate<>(producerFactory, false);
+        return kafkaTemplate;
     }
 }

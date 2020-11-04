@@ -1,6 +1,7 @@
 package com.elab.data.dts.utils;
 
-import org.junit.jupiter.api.Test;
+
+import org.junit.Test;
 
 /**
  * @Module TODO

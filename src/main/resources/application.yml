@@ -3,6 +3,8 @@ server:
 spring:
   profiles:
     active: dev
+  application:
+    name: dts-server
 #  dts:
 #    username: xxx
 #    password: xxxx
@@ -14,6 +16,8 @@ spring:
 #    use-config-checkpoint-name: true
 #    subscribe-mode-name: subscribe
 #    max-poll-records: 100
+#     include-data-info: # 数据过滤  包含数据信息
+#        marketing_db_prod: [ all,abc ]  # marketing_db_prod : 对应的库名    [ all,abc ] 对应的表名 : all 代表所有表, abc 代表具体的表名
 #  kafka:
 #    bootstrap-servers: xxxx:9093,xxxx:9093,xxxx:9093
 ##      trust-store-password: KafkaOnsClient
