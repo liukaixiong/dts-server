@@ -172,10 +172,34 @@ public class DataParseUtils {
         dmlData.setOperation(record.getOperation());
         List<String> changeFieldList = new ArrayList<>();
         Map<String, FieldData> fieldDataMap = parseUpdateField(record, changeFieldList);
+        dmlData.setId(getFieldValue(fieldDataMap, "id"));
         dmlData.setFieldDataMap(fieldDataMap);
         dmlData.setChangeFieldList(changeFieldList);
         dmlData.setSourceTimestamp(record.getSourceTimestamp());
         return dmlData;
+    }
+
+    /**
+     * 获取数据的值
+     *
+     * @param fieldDataMap 数据对象
+     * @param fieldName    数据字段名称
+     * @return
+     */
+    private static String getFieldValue(Map<String, FieldData> fieldDataMap, String fieldName) {
+        FieldData fieldData = fieldDataMap.get(fieldName);
+        if (fieldData != null) {
+            Object value = fieldData.getValue();
+            if (value != null) {
+                return value.toString();
+            }
+
+            Object oldValue = fieldData.getOldValue();
+            if (value != null) {
+                return oldValue.toString();
+            }
+        }
+        return null;
     }
 
     /**
@@ -228,22 +252,33 @@ public class DataParseUtils {
             if (StringUtils.isEmpty(ddlSql)) {
                 return null;
             }
-            int startIndex = 0;
-            int endIndex = 0;
-
             if (ddlSql.indexOf("ADD INDEX") > -1) {
-                startIndex = ddlSql.indexOf("`") + 1;
-                endIndex = ddlSql.indexOf("` ");
+                tableName = getTableNameBySql(ddlSql, "`", "` ");
+            } else if (ddlSql.indexOf("alter table") > -1) {
+                tableName = getTableNameBySql(ddlSql, "alter table ", " ");
             } else {
-                startIndex = ddlSql.indexOf(".`") + 2;
-                endIndex = ddlSql.indexOf("` ");
+                tableName = getTableNameBySql(ddlSql, ".`", "` ");
             }
-
-            tableName = ddlSql.substring(startIndex, endIndex);
         } catch (Exception e) {
             LOG.error("解析DDLSQL失败:" + ddlSql, e);
         }
         return tableName;
     }
+
+    /**
+     * 根据SQL截取表名
+     *
+     * @param sql       操作SQL
+     * @param start     开始占位符
+     * @param end       结束占位符
+     * @return
+     */
+    private static String getTableNameBySql(String sql, String start, String end) {
+        int startIndex = sql.indexOf(start) + start.length();
+        int endIndex = sql.indexOf(end, startIndex);
+        String tableName = sql.substring(startIndex, endIndex);
+        return tableName;
+    }
+
 
 }

@@ -21,8 +21,6 @@
 
 由于DTS集成的kafka是基于单分区的，所以同一时刻只能有一个消费者消费（也就是自身自带的消费者），在某些情况可能会产生消息堆积，导致消费延迟(如果业务直接基于dts单个消费者开发的话)，这里只是将消费过来的消息进行格式化转换之后，直接放入一个全新的kafka，交给业务方自己去消费。避免binlog消费能力下降。
 
-
-
 ## 项目结构
 
 - config : 配置类
@@ -35,6 +33,8 @@
 > 另外可能需要看一下application.yml配置,将你的应用的一些环境配置上去. 如果涉及到环境切分的话
 
 > KafkaConfiguration代码中有一个环境变量的配置: dev  如果了解环境切分的可以新增一个application-dev.yml的环境里面配置ssl相关的参数
+
+如果启动时候，发现数据没进来，请查看配置`spring.dts.include-data-info`是否关注了该数据，又或者在`logback.xml`文件中将日志级别调整至DEBUG，但是可能会产生大量刷屏日志，这个在调试的时候注意一下。
 
 ## 代码流程介绍
 
@@ -53,12 +53,13 @@
 
 ### binlog格式化模版
 
+#### 增删改数据
 ```json
 {
 "changeFieldList":[                                // 修改的字段名
         "updated"
     ],
-    "databaseName":"databseName",                  // 数据库名称
+    "databaseName":"databaseName",                  // 数据库名称
     "fieldDataMap":{
         "id":{
             "dataType":"java.lang.Integer",        // 数据类型
@@ -79,7 +80,17 @@
 }
 ```
 
+#### 表结构变化语句
 
+```json
+{
+    "databaseName":"库名",                                               // 数据库名称
+    "operation":"DDL",                                                  // 表示操作类型
+    "sourceTimestamp":1605582383,                                       // 数据产生时间戳
+    "sql":"alter table 表名 modify 字段名 varchar(100) COMMENT '描述'",	// 具体的执行SQL
+    "tableName":"表名"                                                   // 表名
+}
+```
 
 如果有需要可以在这个基础上进行二次开发，节省更多时间。
 

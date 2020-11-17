@@ -1,6 +1,7 @@
 package com.elab.data.dts.listener.event;
 
 import com.elab.data.dts.common.UserRecord;
+import com.elab.data.dts.config.props.DTSProperties;
 import com.elab.data.dts.formats.avro.Operation;
 import com.elab.data.dts.model.TableData;
 import com.elab.data.dts.sender.IMonitorDataProducer;
@@ -8,6 +9,9 @@ import com.elab.data.dts.sender.ISendProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 事件执行器
@@ -17,10 +21,14 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public abstract class AbstractEventProcess {
 
-    private Logger log = LoggerFactory.getLogger(getClass());
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired(required = false)
     private IMonitorDataProducer producer;
+
+    @Autowired
+    protected DTSProperties dtsProperties;
 
     /**
      * 如果子类有实现代表希望通过发射器将收到的数据发送出去
@@ -39,15 +47,40 @@ public abstract class AbstractEventProcess {
     public abstract boolean subscription(Operation operation);
 
     /**
-     * 处理表的业务数据,具体参考@Link processEvent
+     * 处理表的业务数据,具体参考@Link AbstractEventProcess.processEvent()
+     *
      * @param tableData
      * @return true 为后续的消息发送 false 表示后续消息不发送
      * @throws Exception
      */
     protected boolean process(TableData tableData) throws Exception {
-        // 子类去实现,处理数据的逻辑
-        return true;
+        // 实现数据过滤
+
+        // 先过滤排除的
+        Map<String, List<String>> excludeDataInfo = dtsProperties.getExcludeDataInfo();
+        if (isSubscriptionData(tableData, excludeDataInfo)) {
+            logger.debug("该数据属于需要排除的数据，在dtsProperties中excludeDataInfo配置,application.yml配置中填写");
+            return false;
+        }
+
+        // 然后再过滤不关注的
+        Map<String, List<String>> includeDataInfo = dtsProperties.getIncludeDataInfo();
+        if (!isSubscriptionData(tableData, includeDataInfo)) {
+            logger.debug("该数据属于非关注数据，在dtsProperties中includeDataInfo中定义,application.yml配置中填写");
+            return false;
+        }
+
+        return process0(tableData);
     }
+
+    /**
+     * 业务回调处理
+     *
+     * @param tableData
+     * @return
+     * @throws Exception
+     */
+    protected abstract boolean process0(TableData tableData) throws Exception;
 
     /**
      * 解析数据
@@ -72,7 +105,7 @@ public abstract class AbstractEventProcess {
             }
         } catch (Exception e) {
             sendErrorMsg(e, record, tableData);
-            log.error("处理数据失败", e);
+            logger.error("处理数据失败", e);
         }
     }
 
@@ -97,6 +130,25 @@ public abstract class AbstractEventProcess {
         if (producer != null) {
             producer.send(tableData);
         }
+    }
+
+    /**
+     * 是否关注个该数据
+     *
+     * @param tableData
+     * @param includeDataInfo
+     * @return
+     */
+    private boolean isSubscriptionData(TableData tableData, Map<String, List<String>> includeDataInfo) {
+        String databaseName = tableData.getDatabaseName();
+        String tableName = tableData.getTableName();
+        if (includeDataInfo != null) {
+            List<String> tables = includeDataInfo.get(databaseName);
+            if (tables != null && (tables.contains("all") || tables.contains(tableName))) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

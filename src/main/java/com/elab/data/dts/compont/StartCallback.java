@@ -47,7 +47,11 @@ public class StartCallback implements ApplicationRunner {
         // initial checkpoint for first seek(a timestamp to set, eg 1566180200 if you want (Mon Aug 19 10:03:21 CST 2019))
         //long startTimestamp = System.currentTimeMillis() / 1000;
 //        System.out.println("-------->" + startTimestamp);
-        properties.setProperty(Names.INITIAL_CHECKPOINT_NAME, pros.getInitialCheckpointName());
+        if (pros.getInitialCheckpointName() != null) {
+            properties.setProperty(Names.INITIAL_CHECKPOINT_NAME, pros.getInitialCheckpointName());
+        } else {
+            properties.setProperty(Names.INITIAL_CHECKPOINT_NAME, (System.currentTimeMillis() / 1000) + "");
+        }
         // if force use config checkpoint when start. for checkpoint reset
         properties.setProperty(Names.USE_CONFIG_CHECKPOINT_NAME, pros.getUseConfigCheckpointName());
         // use consumer assign or subscribe interface

@@ -20,6 +20,11 @@ public class DMLData extends TableData {
      */
     private List<String> changeFieldList;
 
+    /**
+     * 数据的主键
+     */
+    private String id;
+
     public Map<String, FieldData> getFieldDataMap() {
         return fieldDataMap;
     }
@@ -34,5 +39,13 @@ public class DMLData extends TableData {
 
     public void setFieldDataMap(Map<String, FieldData> fieldDataMap) {
         this.fieldDataMap = fieldDataMap;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
