@@ -252,12 +252,22 @@ public class DataParseUtils {
             if (StringUtils.isEmpty(ddlSql)) {
                 return null;
             }
-            if (ddlSql.indexOf("ADD INDEX") > -1) {
+            if (ddlSql.toLowerCase().indexOf("add index") > -1) {
                 tableName = getTableNameBySql(ddlSql, "`", "` ");
-            } else if (ddlSql.indexOf("alter table") > -1) {
-                tableName = getTableNameBySql(ddlSql, "alter table ", " ");
+            } else if (ddlSql.toLowerCase().indexOf("alter table") > -1) {
+                if(ddlSql.toLowerCase().indexOf("`.") > -1){
+                    tableName = getTableNameBySql(ddlSql, ".`", "`");
+                }else {
+                    tableName = getTableNameBySql(ddlSql, "alter table ", " ");
+                }
+            } else if (ddlSql.toLowerCase().indexOf("create table") > -1) {
+                if (ddlSql.toLowerCase().indexOf(".`") > -1) {
+                    tableName = getTableNameBySql(ddlSql, ".`", "` ");
+                }else{
+                    tableName = getTableNameBySql(ddlSql, "`", "`");
+                }
             } else {
-                tableName = getTableNameBySql(ddlSql, ".`", "` ");
+                tableName = getTableNameBySql(ddlSql, "`", "`");
             }
         } catch (Exception e) {
             LOG.error("解析DDLSQL失败:" + ddlSql, e);
@@ -268,9 +278,9 @@ public class DataParseUtils {
     /**
      * 根据SQL截取表名
      *
-     * @param sql       操作SQL
-     * @param start     开始占位符
-     * @param end       结束占位符
+     * @param sql   操作SQL
+     * @param start 开始占位符
+     * @param end   结束占位符
      * @return
      */
     private static String getTableNameBySql(String sql, String start, String end) {

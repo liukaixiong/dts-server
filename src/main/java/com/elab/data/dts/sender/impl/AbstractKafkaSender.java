@@ -75,7 +75,7 @@ public abstract class AbstractKafkaSender implements ISendProducer {
         }
     }
 
-    private Integer getPartitionIndex(String tableName, String id, Integer partitionCount) {
+    protected Integer getPartitionIndex(String tableName, String id, Integer partitionCount) {
         if (id == null || tableName == null || partitionCount == null) {
             return null;
         }

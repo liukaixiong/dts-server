@@ -37,7 +37,7 @@ public class DDLEventProcess extends AbstractEventProcess {
 
     @Override
     protected boolean process0(TableData tableData) throws Exception {
-        logger.debug("DDL数据处理:" + JSON.toJSONString(tableData));
+        logger.info("DDL数据处理:" + JSON.toJSONString(tableData));
         return true;
     }
 
