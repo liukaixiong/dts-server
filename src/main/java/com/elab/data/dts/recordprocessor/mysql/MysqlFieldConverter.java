@@ -60,9 +60,9 @@ public class MysqlFieldConverter implements FieldConverter {
         DATA_ADAPTER[245] = new TextObjectAdapter();  //Type.JSON;
     }
 
-    
+
     static interface DataAdapter {
-        
+
         FieldValue getFieldValue(Object data);
     }
 
@@ -122,7 +122,7 @@ public class MysqlFieldConverter implements FieldConverter {
 
     static class TimestampStringAdapter implements DataAdapter {
 
-        static String[] MILLIS_PREFIX = new String[]{"","0","00","000","0000","00000","000000"};
+        static String[] MILLIS_PREFIX = new String[]{"", "0", "00", "000", "0000", "00000", "000000"};
 
         @Override
         public FieldValue getFieldValue(Object data) {
@@ -133,7 +133,7 @@ public class MysqlFieldConverter implements FieldConverter {
                 Timestamp timestamp = (Timestamp) data;
 
                 timestampBuilder.append(timestamp.getTimestamp());
-                if (null != timestamp.getMillis()) {
+                if (null != timestamp.getMillis() && timestamp.getMillis() > 0) {
                     timestampBuilder.append('.');
                     String millis = java.lang.Integer.toString(timestamp.getMillis());
                     timestampBuilder.append(MILLIS_PREFIX[6 - millis.length()]).append(millis);
@@ -302,7 +302,7 @@ public class MysqlFieldConverter implements FieldConverter {
     }
 
 
-    static class YearAdapter implements DataAdapter  {
+    static class YearAdapter implements DataAdapter {
 
         @Override
         public FieldValue getFieldValue(Object data) {
@@ -319,7 +319,7 @@ public class MysqlFieldConverter implements FieldConverter {
 
     }
 
-    static class CharacterAdapter implements DataAdapter  {
+    static class CharacterAdapter implements DataAdapter {
 
         @Override
         public FieldValue getFieldValue(Object data) {
@@ -337,7 +337,7 @@ public class MysqlFieldConverter implements FieldConverter {
 
     }
 
-    static class GeometryAdapter implements DataAdapter  {
+    static class GeometryAdapter implements DataAdapter {
 
         @Override
         public FieldValue getFieldValue(Object data) {

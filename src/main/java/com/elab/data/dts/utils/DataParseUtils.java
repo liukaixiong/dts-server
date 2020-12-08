@@ -11,6 +11,7 @@ import com.elab.data.dts.model.FieldData;
 import com.elab.data.dts.model.TableData;
 import com.elab.data.dts.recordprocessor.FieldConverter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +26,8 @@ import java.util.*;
 public class DataParseUtils {
     private static final FieldConverter FIELD_CONVERTER = FieldConverter.getConverter("mysql", null);
     private static Logger LOG = LoggerFactory.getLogger(DataParseUtils.class);
-
+    public static final FastDateFormat ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT
+            = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss");
     private static Class[] fieldClass = new Class[256];
 
     static {
@@ -111,13 +113,13 @@ public class DataParseUtils {
 
                 Object toPrintBefore = before.take();
                 if (toPrintBefore != null) {
-                    Object beforeValue = FIELD_CONVERTER.convert(field, toPrintBefore).toString();
+                    Object beforeValue = getTypeValue(field, toPrintBefore);
                     fieldData.setOldValue(beforeValue);
                 }
 
                 Object toPrintAfter = after.take();
                 if (toPrintAfter != null) {
-                    Object afterValue = FIELD_CONVERTER.convert(field, toPrintAfter).toString();
+                    Object afterValue = getTypeValue(field, toPrintAfter);
                     fieldData.setValue(afterValue);
                 }
 
@@ -134,6 +136,18 @@ public class DataParseUtils {
             }
         }
         return fieldDataMap;
+    }
+
+    private static Object getTypeValue(Field field, Object toPrintBefore) {
+        Object text = FIELD_CONVERTER.convert(field, toPrintBefore);
+
+        if (text != null && field.getDataTypeNumber() == 7) {
+            text = ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(Long.valueOf(text.toString()) * 1000);
+        } else {
+            text.toString();
+        }
+
+        return text;
     }
 
 
@@ -255,15 +269,15 @@ public class DataParseUtils {
             if (ddlSql.toLowerCase().indexOf("add index") > -1) {
                 tableName = getTableNameBySql(ddlSql, "`", "` ");
             } else if (ddlSql.toLowerCase().indexOf("alter table") > -1) {
-                if(ddlSql.toLowerCase().indexOf("`.") > -1){
+                if (ddlSql.toLowerCase().indexOf("`.") > -1) {
                     tableName = getTableNameBySql(ddlSql, ".`", "`");
-                }else {
+                } else {
                     tableName = getTableNameBySql(ddlSql, "alter table ", " ");
                 }
             } else if (ddlSql.toLowerCase().indexOf("create table") > -1) {
                 if (ddlSql.toLowerCase().indexOf(".`") > -1) {
                     tableName = getTableNameBySql(ddlSql, ".`", "` ");
-                }else{
+                } else {
                     tableName = getTableNameBySql(ddlSql, "`", "`");
                 }
             } else {
