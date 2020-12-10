@@ -6,6 +6,7 @@
 - 数据过滤
 - 集成客户端kafka消息发送
 - 监控规则
+- 位点回滚: 回到指定时间点重新开始
 
 后续还会加强的功能点:
 
@@ -94,6 +95,19 @@
 
 如果有需要可以在这个基础上进行二次开发，节省更多时间。
 
+
+### 注意的点
+```yaml
+spring:
+  dts:
+    initial-checkpoint-name: 1596440543    # 注意这里是秒的时间戳，默认是当前时间戳。第一次启动的时候会参考这个时间戳，后续以文件或者kafka的存储位点为主
+    use-config-checkpoint-name: false      # 强制使用当前位点，这里使用的时候要特别注意，不是非得回滚到指定位点，不要用true，否则重启的时候会重复消费，通常用来回到特定时间点的数据进行消费
+    subscribe-mode-name: subscribe         # subscribe表示多机主备,如果有多台,只有其中一台会消费,其他只是等待这个消费挂掉,后续补上,起到容灾作用
+    max-poll-records: 100
+    include-data-info: # 数据过滤  包含数据信息
+      marketing_db_prod: [ all,abc ]  # marketing_db_prod : 对应的库名    [ all,abc ] 对应的表名 : all 代表所有表, abc 代表具体的表名
+      # 如果有多个的话可以继续添加例如(marketing_db_prod2: [ all,abc ])
+```
 **后续还会将一些dts使用心得分享处理,会持续更新.**
 
 **欢迎大家一起交流**

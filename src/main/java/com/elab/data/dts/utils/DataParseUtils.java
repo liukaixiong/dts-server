@@ -139,7 +139,7 @@ public class DataParseUtils {
     }
 
     private static Object getTypeValue(Field field, Object toPrintBefore) {
-        Object text = FIELD_CONVERTER.convert(field, toPrintBefore);
+        Object text = FIELD_CONVERTER.convert(field, toPrintBefore).toString();
 
         if (text != null && field.getDataTypeNumber() == 7) {
             text = ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(Long.valueOf(text.toString()) * 1000);
@@ -256,6 +256,7 @@ public class DataParseUtils {
 
     /**
      * 获取DDL中的表名
+     * // 莫名其妙的SQL语句太多了,诶~~~
      *
      * @param ddlSql
      * @return
@@ -266,22 +267,37 @@ public class DataParseUtils {
             if (StringUtils.isEmpty(ddlSql)) {
                 return null;
             }
-            if (ddlSql.toLowerCase().indexOf("add index") > -1) {
-                tableName = getTableNameBySql(ddlSql, "`", "` ");
-            } else if (ddlSql.toLowerCase().indexOf("alter table") > -1) {
-                if (ddlSql.toLowerCase().indexOf("`.") > -1) {
-                    tableName = getTableNameBySql(ddlSql, ".`", "`");
+
+            String ddlSqlLowerCase = ddlSql.toLowerCase();
+
+            if (ddlSqlLowerCase.indexOf("add index") > -1) {
+                tableName = getTableNameBySql(ddlSqlLowerCase, "`", "` ");
+            } else if (ddlSqlLowerCase.indexOf("alter table") > -1) {
+                if (ddlSqlLowerCase.indexOf("`.") > -1) {
+                    tableName = getTableNameBySql(ddlSqlLowerCase, ".`", "`");
                 } else {
-                    tableName = getTableNameBySql(ddlSql, "alter table ", " ");
+                    tableName = getTableNameBySql(ddlSqlLowerCase, "alter table ", " ");
                 }
-            } else if (ddlSql.toLowerCase().indexOf("create table") > -1) {
-                if (ddlSql.toLowerCase().indexOf(".`") > -1) {
-                    tableName = getTableNameBySql(ddlSql, ".`", "` ");
+            } else if (ddlSqlLowerCase.indexOf("create table if not exists ") > -1) {
+                if (ddlSqlLowerCase.indexOf(".`") > -1) {
+                    tableName = getTableNameBySql(ddlSqlLowerCase, ".`", "` ");
                 } else {
-                    tableName = getTableNameBySql(ddlSql, "`", "`");
+                    tableName = getTableNameBySql(ddlSqlLowerCase, "create table if not exists ", "\n");
+                }
+            } else if (ddlSqlLowerCase.indexOf("create table") > -1) {
+                if (ddlSqlLowerCase.indexOf(".`") > -1) {
+                    tableName = getTableNameBySql(ddlSqlLowerCase, ".`", "` ");
+                } else {
+                    tableName = getTableNameBySql(ddlSqlLowerCase, "`", "`");
+                }
+            } else if (ddlSqlLowerCase.indexOf("truncate table ") > -1) {
+                if (ddlSqlLowerCase.indexOf(".`") > -1) {
+                    tableName = getTableNameBySql(ddlSqlLowerCase, ".`", "` ");
+                } else {
+                    tableName = getTableNameBySql(ddlSqlLowerCase, "truncate table ", null);
                 }
             } else {
-                tableName = getTableNameBySql(ddlSql, "`", "`");
+                tableName = getTableNameBySql(ddlSqlLowerCase, "`", "`");
             }
         } catch (Exception e) {
             LOG.error("解析DDLSQL失败:" + ddlSql, e);
@@ -299,7 +315,10 @@ public class DataParseUtils {
      */
     private static String getTableNameBySql(String sql, String start, String end) {
         int startIndex = sql.indexOf(start) + start.length();
-        int endIndex = sql.indexOf(end, startIndex);
+        int endIndex = sql.length();
+        if (end != null) {
+            endIndex = sql.indexOf(end, startIndex);
+        }
         String tableName = sql.substring(startIndex, endIndex);
         return tableName;
     }

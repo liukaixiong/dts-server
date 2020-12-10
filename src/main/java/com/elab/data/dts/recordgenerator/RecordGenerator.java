@@ -8,6 +8,7 @@ import com.elab.data.dts.metastore.LocalFileMetaStore;
 import com.elab.data.dts.metastore.MetaStoreCenter;
 import com.elab.data.dts.recordprocessor.EtlRecordProcessor;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.TopicPartition;
@@ -119,6 +120,7 @@ public class RecordGenerator implements Runnable, Closeable {
         Checkpoint checkpoint = null;
         // we encourage  user impl their own checkpoint store, but plan b is also  supported
         metaStoreCenter.registerStore(KAFKA_STORE_NAME, new KafkaMetaStore(kafkaConsumerWrap.getRawConsumer()));
+        boolean isForceUseCheckpoint = useCheckpointConfig.get();
         if (useCheckpointConfig.compareAndSet(true, false)) {
             log.info("RecordGenerator: force use initial checkpoint [{}] to start", checkpoint);
             checkpoint = initialCheckpoint;
@@ -134,9 +136,17 @@ public class RecordGenerator implements Runnable, Closeable {
         switch (subscribeMode) {
             case SUBSCRIBE: {
                 kafkaConsumerWrap.subscribeTopic(topicPartition, () -> {
+                    if (isForceUseCheckpoint && initialCheckpoint != null) {
+                        String formatDate = DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(initialCheckpoint.getTimeStamp() * 1000);
+                        log.warn("使用强制位点来消费topic数据,起始位置时间点:" + formatDate + " \t " + initialCheckpoint.getTimeStamp() + "\t offset:" + initialCheckpoint.getOffset() + "\t 通过[spring.dts.use-config-checkpoint-name]关闭!");
+                        return initialCheckpoint;
+                    }
                     Checkpoint ret = metaStoreCenter.seek(KAFKA_STORE_NAME, topicPartition, groupID);
                     if (null == ret) {
                         ret = initialCheckpoint;
+                    } else {
+                        String formatDate = DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(ret.getTimeStamp() * 1000);
+                        log.info("使用kafka存储的位点: [" + formatDate + "] \t timeStamp:" + ret.getTimeStamp() + "\t offset:" + ret.getOffset());
                     }
                     return ret;
                 });

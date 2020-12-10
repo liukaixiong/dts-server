@@ -12,9 +12,9 @@ spring:
 #    group-name: temp_jinmao_data
 #    kafka-broker-url-name: dts-cn-shanghai.aliyuncs.com:18001
 #    kafka-topic: xxxx
-#    initial-checkpoint-name: 1596440543
-#    use-config-checkpoint-name: true
-#    subscribe-mode-name: subscribe
+#    initial-checkpoint-name: 1596440543    # 注意这里是秒的时间戳，默认是当前时间戳。第一次启动的时候会参考这个时间戳，后续以文件或者kafka的存储位点为主
+#    use-config-checkpoint-name: false       # 强制使用当前位点，这里使用的时候要特别注意，不是非得回滚到指定位点，不要用true，否则重启的时候会重复消费
+#    subscribe-mode-name: subscribe         # subscribe表示多机主备
 #    max-poll-records: 100
 #     include-data-info: # 数据过滤  包含数据信息
 #        marketing_db_prod: [ all,abc ]  # marketing_db_prod : 对应的库名    [ all,abc ] 对应的表名 : all 代表所有表, abc 代表具体的表名

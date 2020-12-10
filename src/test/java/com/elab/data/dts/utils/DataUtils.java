@@ -1,6 +1,7 @@
 package com.elab.data.dts.utils;
 
 
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -49,11 +50,47 @@ public class DataUtils {
                 "DROP INDEX `ps`";
         parseTableName(sql);
     }
+    @Test
+    public void testTruncateTable() {
+        String sql = "truncate table app_dm_data_center_mrk_data_qr_code_offline_d";
+        parseTableName(sql);
+    }
+
+    @Test
+    public void testCreateTable() {
+        String sql = "CREATE TABLE IF NOT EXISTS app_dm_data_center_mrk_data_qr_code_offline_d\n" +
+                "(\n" +
+                "   id                INT(11) NOT NULL AUTO_INCREMENT COMMENT '主键自增ID',\n" +
+                "   report_d          DATETIME                        COMMENT '统计日期',   -- 参与时间:年月日\n" +
+                "   brand_id          INT(4)                          COMMENT '归属集团',\n" +
+                "   house_id          INT(11)                         COMMENT '归属项目',\n" +
+                "   house_name        VARCHAR(50)                     COMMENT '项目名称',\n" +
+                "   terminal          INT(2)                          COMMENT '平台ID',\n" +
+                "\t\t\t\t\t\t\t\t\t                 \n" +
+                "   qr_code_id        INT(11)                         COMMENT '二维码ID',   -- 对应qr_code 表中的  id 主键  和 雪莹确认\n" +
+                "   qr_code_name      VARCHAR(100)                    COMMENT '二维码名称',   -- 对应qr_code 表中的  instruction  和 殳佳确认\n" +
+                "   mobile            VARCHAR(20)                     COMMENT '手机号', \n" +
+                "   qr_code_url       VARCHAR(500)                    COMMENT '二维码链接', \n" +
+                "   created           DATETIME                        COMMENT '活动创建时间',\n" +
+                "   creator           VARCHAR(30)                     COMMENT '运营创建人',\n" +
+                "   view_pv           INT(11)                         COMMENT '浏览量',\n" +
+                "   view_uv           INT(11)                         COMMENT '浏览人数',\n" +
+                "   new_cust_num      INT(11)                         COMMENT '新增获客',\n" +
+                "   get_call_num      INT(11)                         COMMENT '着陆页面获电数',\n" +
+                "   new_get_call      INT(11)                         COMMENT '着陆页面新增获电',\n" +
+                "   \n" +
+                "   type              INT(2)                          COMMENT '数据类型：用于区分数据是实时的还是离线的(0-代表实时，1-代表离线)',\n" +
+                "   status            INT(2)                          COMMENT '状态：1  有效,-1  无效',  \n" +
+                "   insert_time       DATETIME                        COMMENT '入库时间',\n" +
+                "   PRIMARY KEY (id)\n" +
+                ")ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='二维码运营活动数据统计表'";
+        parseTableName(sql);
+    }
 
     private void parseTableName(String sql) {
         String tableName = DataParseUtils.getDDLTableName(sql);
         System.out.println(tableName);
-
+        Assert.assertTrue(tableName != null);
     }
 
 }

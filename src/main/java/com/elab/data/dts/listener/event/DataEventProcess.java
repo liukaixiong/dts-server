@@ -7,6 +7,7 @@ import com.elab.data.dts.model.TableData;
 import com.elab.data.dts.sender.ISendProducer;
 import com.elab.data.dts.sender.impl.DMLKafkaSendProducer;
 import com.elab.data.dts.utils.DataParseUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ public class DataEventProcess extends AbstractEventProcess {
 
     @Override
     protected boolean process0(TableData tableData) throws Exception {
-        logger.debug(" 得到的转换数据 : " + JSON.toJSONString(tableData));
+        logger.debug("数据来源时间:" + DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(tableData.getSourceTimestamp() * 1000) + " 得到的转换数据 : " + JSON.toJSONString(tableData));
         return true;
     }
 
