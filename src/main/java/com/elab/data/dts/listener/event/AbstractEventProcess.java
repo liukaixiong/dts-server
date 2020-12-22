@@ -59,14 +59,14 @@ public abstract class AbstractEventProcess {
         // 先过滤排除的
         Map<String, List<String>> excludeDataInfo = dtsProperties.getExcludeDataInfo();
         if (isSubscriptionData(tableData, excludeDataInfo)) {
-            logger.debug("该数据属于需要排除的数据，在dtsProperties中excludeDataInfo配置,application.yml配置中填写");
+            logger.debug("该数据[" + tableData.getTableName() + "]属于需要排除的数据，在dtsProperties中excludeDataInfo配置,application.yml配置中填写");
             return false;
         }
 
         // 然后再过滤不关注的
         Map<String, List<String>> includeDataInfo = dtsProperties.getIncludeDataInfo();
         if (!isSubscriptionData(tableData, includeDataInfo)) {
-            logger.debug("该数据属于非关注数据，在dtsProperties中includeDataInfo中定义,application.yml配置中填写");
+            logger.debug("该数据属[" + tableData.getTableName() + "]于非关注数据，在dtsProperties中includeDataInfo中定义,application.yml配置中填写");
             return false;
         }
 
@@ -139,7 +139,7 @@ public abstract class AbstractEventProcess {
      * @param includeDataInfo
      * @return
      */
-    private boolean isSubscriptionData(TableData tableData, Map<String, List<String>> includeDataInfo) {
+    protected boolean isSubscriptionData(TableData tableData, Map<String, List<String>> includeDataInfo) {
         String databaseName = tableData.getDatabaseName();
         String tableName = tableData.getTableName();
         if (includeDataInfo != null) {

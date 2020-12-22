@@ -301,8 +301,9 @@ public class DataParseUtils {
             }
         } catch (Exception e) {
             LOG.error("解析DDLSQL失败:" + ddlSql, e);
+            return null;
         }
-        return tableName;
+        return tableName.replaceAll("`", "");
     }
 
     /**

@@ -5,8 +5,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * @Module TODO
- * @Description TODO
+ * @Module 数据解析工具
+ * @Description 解析所有表名
  * @Author Administrator
  * @Date 2020/10/20 14:45
  */
@@ -50,9 +50,16 @@ public class DataUtils {
                 "DROP INDEX `ps`";
         parseTableName(sql);
     }
+
     @Test
     public void testTruncateTable() {
         String sql = "truncate table app_dm_data_center_mrk_data_qr_code_offline_d";
+        parseTableName(sql);
+    }
+
+    @Test
+    public void testTableName() {
+        String sql = "ALTER TABLE `t_dm_deal_contract` MODIFY COLUMN `params` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '接口参数' AFTER `stake_holder_mobile`";
         parseTableName(sql);
     }
 

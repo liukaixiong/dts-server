@@ -44,7 +44,7 @@ public class DTSProperties {
     /**
      * 如果在启动时强制使用配置检查点。在检查点重置
      */
-    private String useConfigCheckpointName;
+    private String useConfigCheckpointName = "false";
     /**
      * 容灾能力 assign 表示单机 subscribe表示主备
      */
