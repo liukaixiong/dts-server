@@ -119,6 +119,29 @@ spring:
     table-partition-map:        # 表和分区进行绑定
       content_materials_label_rlat_info: 6
 ```
+
+#### 临时通过API接口新增要过滤的表
+
+仅仅是应对特殊情况，由于是单分区消费也可以理解为单机消费，所以同一时刻也只可能有一个消费者在消费，重启太麻烦了。
+
+>  该数据存在内存中，重启则无效。
+
+```http
+# GET 请求  获取当前要过滤的表名列表
+http://localhost:8686/debug/register/tableName/list?token=自定义的token
+
+# GET 请求  新增要过滤的表名
+http://localhost:8686/debug/register/tableName/list?token=自定义的token&&tb=具体的表名
+
+# GET 请求  删除要过滤的表名
+http://localhost:8686/debug/register/tableName/clear?token=自定义的token&&tb=具体的表名
+
+# GET 请求 清空所有过滤的表名
+http://localhost:8686/debug/register/tableName/clear?token=自定义的token
+```
+
+
+
 **后续还会将一些dts使用心得分享处理,会持续更新.**
 
 **欢迎大家一起交流**
