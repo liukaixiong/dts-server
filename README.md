@@ -104,9 +104,14 @@ spring:
     use-config-checkpoint-name: false      # 强制使用当前位点，这里使用的时候要特别注意，不是非得回滚到指定位点，不要用true，否则重启的时候会重复消费，通常用来回到特定时间点的数据进行消费
     subscribe-mode-name: subscribe         # subscribe表示多机主备,如果有多台,只有其中一台会消费,其他只是等待这个消费挂掉,后续补上,起到容灾作用
     max-poll-records: 100
-    include-data-info: # 数据过滤  包含数据信息
+    include-data-info:          # 数据过滤  包含数据信息
       marketing_db_prod: [ all,abc ]  # marketing_db_prod : 对应的库名    [ all,abc ] 对应的表名 : all 代表所有表, abc 代表具体的表名
       # 如果有多个的话可以继续添加例如(marketing_db_prod2: [ all,abc ])
+    exclude-table-change-field: # 过滤掉binlog中发生改变的字段
+      all: [updated,updator]    # 过滤掉所有表的发生改变的字段
+      c_user_info: [ updated ]  # 过滤掉指定表的发生改变的字段
+    table-partition-map:        # 表和分区进行绑定
+      content_materials_label_rlat_info: 6
 ```
 **后续还会将一些dts使用心得分享处理,会持续更新.**
 

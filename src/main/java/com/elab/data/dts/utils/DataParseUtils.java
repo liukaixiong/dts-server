@@ -303,6 +303,11 @@ public class DataParseUtils {
             LOG.error("解析DDLSQL失败:" + ddlSql, e);
             return null;
         }
+
+        if (tableName.indexOf("`") > -1) {
+            tableName = getTableNameBySql(tableName, "`", "`");
+        }
+
         return tableName.replaceAll("`", "");
     }
 
