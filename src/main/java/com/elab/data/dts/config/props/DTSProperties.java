@@ -2,7 +2,6 @@ package com.elab.data.dts.config.props;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -67,32 +66,6 @@ public class DTSProperties {
      * 排除的数据库信息
      */
     private Map<String, List<String>> excludeDataInfo;
-
-    /**
-     * 排除表的改变字段信息,注意的是这里使用的是List.containsAll方法,也就是说只过滤containsAll方法返回为true的情况
-     */
-    private Map<String, List<String>> excludeTableChangeField;
-
-    /**
-     * 表名,分区号。将特定的表名落入特定分区
-     */
-    private Map<String, Integer> tablePartitionMap = new HashMap<>();
-
-    public Map<String, Integer> getTablePartitionMap() {
-        return tablePartitionMap;
-    }
-
-    public void setTablePartitionMap(Map<String, Integer> tablePartitionMap) {
-        this.tablePartitionMap = tablePartitionMap;
-    }
-
-    public Map<String, List<String>> getExcludeTableChangeField() {
-        return excludeTableChangeField;
-    }
-
-    public void setExcludeTableChangeField(Map<String, List<String>> excludeTableChangeField) {
-        this.excludeTableChangeField = excludeTableChangeField;
-    }
 
     public Integer getMaxPollIntervalMs() {
         return maxPollIntervalMs;

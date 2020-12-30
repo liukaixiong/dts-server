@@ -15,6 +15,6 @@ public interface ISendProducer {
      * @param tableData
      * @throws Exception
      */
-    public void send(TableData tableData);
+    public void send(TableData tableData) throws Exception;
 
 }
