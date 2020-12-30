@@ -111,6 +111,8 @@ spring:
     include-data-info:          # 数据过滤  包含数据信息
       marketing_db_prod: [ all,abc ]  # marketing_db_prod : 对应的库名    [ all,abc ] 对应的表名 : all 代表所有表, abc 代表具体的表名
       # 如果有多个的话可以继续添加例如(marketing_db_prod2: [ all,abc ])
+    exclude-data-info:        # 排除具体的表 : A , B ,C 代表3个表名, marketing_db : 代表库名
+      marketing_db: [ A , B , C]
     exclude-table-change-field: # 过滤掉binlog中发生改变的字段
       all: [updated,updator]    # 过滤掉所有表的发生改变的字段
       c_user_info: [ updated ]  # 过滤掉指定表的发生改变的字段
