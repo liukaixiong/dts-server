@@ -1,5 +1,5 @@
 # 基于阿里云的DTS封装
-最近公司需要应用订阅阿里云RDS相关的binlog，[基于阿里云提供的案例subscribe_exampleale演化而来](https://github.com/LioRoger/subscribe_example)，重构成了SpringBoot、并且升级了相应的jar包，避免了很多版本上面带来的坑，还新增集成了新的客户端kafka、后续会考虑redis等等。
+最近公司需要应用订阅阿里云RDS相关的binlog，[基于阿里云提供的案例subscribe_exampleale演化而来](https://github.com/LioRoger/subscribe_example)，重构成了SpringBoot、并且升级了相应的jar包，避免了很多版本上面带来的问题，还新增集成了新的客户端kafka、后续会考虑redis等等。
 
 功能点:
 - binlog格式化
@@ -98,10 +98,13 @@
 
 
 ### 注意的点
+
+`use-config-checkpoint-name`: 为true的情况,非第一次才会参考initial-checkpoint-name的时间戳为主,达到位点偏移到具体的时间戳
+
 ```yaml
 spring:
   dts:
-    initial-checkpoint-name: 1596440543    # 注意这里是秒的时间戳，默认是当前时间戳。第一次启动的时候会参考这个时间戳，后续以文件或者kafka的存储位点为主
+    initial-checkpoint-name: 1596440543    # 注意这里是秒的时间戳，为空的话默认是当前时间戳。第一次启动的时候会参考这个时间戳，后续配合use-config-checkpoint-name属性以文件或者kafka的存储位点为主,
     use-config-checkpoint-name: false      # 强制使用当前位点，这里使用的时候要特别注意，不是非得回滚到指定位点，不要用true，否则重启的时候会重复消费，通常用来回到特定时间点的数据进行消费
     subscribe-mode-name: subscribe         # subscribe表示多机主备,如果有多台,只有其中一台会消费,其他只是等待这个消费挂掉,后续补上,起到容灾作用
     max-poll-records: 100

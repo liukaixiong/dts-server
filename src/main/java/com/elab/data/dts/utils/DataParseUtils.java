@@ -131,7 +131,17 @@ public class DataParseUtils {
                     } else {
                         changeFieldList.add(field.getName());
                     }
+                } else if (fieldData.getOldValue() != null) {
+                    if (fieldData.getValue() != null) {
+                        if (!fieldData.getValue().equals(fieldData.getOldValue())) {
+                            changeFieldList.add(field.getName());
+                        }
+                    } else {
+                        changeFieldList.add(field.getName());
+                    }
                 }
+
+
                 fieldDataMap.put(field.getName(), fieldData);
             }
         }
