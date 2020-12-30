@@ -55,6 +55,7 @@
 ### binlog格式化模版
 
 #### 增删改数据
+参考类: `com.elab.data.dts.model.DMLData`
 ```json
 {
 "changeFieldList":[                                // 修改的字段名
@@ -82,7 +83,7 @@
 ```
 
 #### 表结构变化语句
-
+参考类: `com.elab.data.dts.model.DDLData`
 ```json
 {
     "databaseName":"库名",                                               // 数据库名称
