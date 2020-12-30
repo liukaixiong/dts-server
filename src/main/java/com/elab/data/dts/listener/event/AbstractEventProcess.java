@@ -1,8 +1,11 @@
 package com.elab.data.dts.listener.event;
 
 import com.elab.data.dts.common.UserRecord;
+import com.elab.data.dts.components.DebugValueComponent;
 import com.elab.data.dts.config.props.DTSProperties;
+import com.elab.data.dts.consts.DTSConstants;
 import com.elab.data.dts.formats.avro.Operation;
+import com.elab.data.dts.model.DMLData;
 import com.elab.data.dts.model.TableData;
 import com.elab.data.dts.sender.IMonitorDataProducer;
 import com.elab.data.dts.sender.ISendProducer;
@@ -21,7 +24,6 @@ import java.util.Map;
  */
 public abstract class AbstractEventProcess {
 
-
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired(required = false)
@@ -29,6 +31,9 @@ public abstract class AbstractEventProcess {
 
     @Autowired
     protected DTSProperties dtsProperties;
+
+    @Autowired
+    private DebugValueComponent debugValueComponent;
 
     /**
      * 如果子类有实现代表希望通过发射器将收到的数据发送出去
@@ -56,21 +61,42 @@ public abstract class AbstractEventProcess {
     protected boolean process(TableData tableData) throws Exception {
         // 实现数据过滤
 
+        if (filterData(tableData)) {
+            return false;
+        }
+
+        return process0(tableData);
+    }
+
+    protected boolean filterData(TableData tableData) {
+
+        if (debugValueComponent.isExcludeTableName(tableData.getTableName())) {
+            logger.debug("该数据[" + tableData.getTableName() + "]属于debugValueComponent排除的数据，在DebugValueComponent中excludeDataInfo配置,application.yml配置中填写");
+            return true;
+        }
+
         // 先过滤排除的
         Map<String, List<String>> excludeDataInfo = dtsProperties.getExcludeDataInfo();
         if (isSubscriptionData(tableData, excludeDataInfo)) {
             logger.debug("该数据[" + tableData.getTableName() + "]属于需要排除的数据，在dtsProperties中excludeDataInfo配置,application.yml配置中填写");
-            return false;
+            return true;
         }
 
         // 然后再过滤不关注的
         Map<String, List<String>> includeDataInfo = dtsProperties.getIncludeDataInfo();
         if (!isSubscriptionData(tableData, includeDataInfo)) {
             logger.debug("该数据属[" + tableData.getTableName() + "]于非关注数据，在dtsProperties中includeDataInfo中定义,application.yml配置中填写");
-            return false;
+            return true;
         }
 
-        return process0(tableData);
+        // 过滤掉因为特殊原因产生的改变字段值
+        Map<String, List<String>> excludeTableChangeField = dtsProperties.getExcludeTableChangeField();
+        if (isChangeFieldData(tableData, excludeTableChangeField)) {
+            logger.debug("该数据属[" + tableData.getTableName() + "]于非关注数据，在dtsProperties中excludeTableChangeField中定义,application.yml配置中填写");
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -136,19 +162,49 @@ public abstract class AbstractEventProcess {
      * 是否关注个该数据
      *
      * @param tableData
-     * @param includeDataInfo
+     * @param ruleDataInfo
      * @return
      */
-    protected boolean isSubscriptionData(TableData tableData, Map<String, List<String>> includeDataInfo) {
+    protected boolean isSubscriptionData(TableData tableData, Map<String, List<String>> ruleDataInfo) {
         String databaseName = tableData.getDatabaseName();
         String tableName = tableData.getTableName();
-        if (includeDataInfo != null) {
-            List<String> tables = includeDataInfo.get(databaseName);
-            if (tables != null && (tables.contains("all") || tables.contains(tableName))) {
+        if (ruleDataInfo != null) {
+            List<String> tables = ruleDataInfo.get(databaseName);
+            if (tables != null && (tables.contains(DTSConstants.MATCH_ALL) || tables.contains(tableName))) {
                 return true;
             }
         }
         return false;
     }
 
+    /**
+     * 是否匹配表的改变字段
+     *
+     * @param tableData
+     * @param ruleDataInfo
+     * @return
+     */
+    protected boolean isChangeFieldData(TableData tableData, Map<String, List<String>> ruleDataInfo) {
+        String tableName = tableData.getTableName();
+        if (ruleDataInfo != null && tableData.getOperation().equals(Operation.UPDATE) && tableData instanceof DMLData) {
+            // 过滤所有表的这些改变字段
+            List<String> allFieldList = ruleDataInfo.get(DTSConstants.MATCH_ALL);
+            if (allFieldList != null) {
+                List<String> changeFieldList = ((DMLData) tableData).getChangeFieldList();
+                if (allFieldList.contains(DTSConstants.MATCH_ALL) || allFieldList.containsAll(changeFieldList)) {
+                    return true;
+                }
+            }
+
+            // 过滤掉指定表的特定字段
+            List<String> fieldList = ruleDataInfo.get(tableName);
+            if (fieldList != null) {
+                List<String> changeFieldList = ((DMLData) tableData).getChangeFieldList();
+                if (fieldList.contains(DTSConstants.MATCH_ALL) || fieldList.containsAll(changeFieldList)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

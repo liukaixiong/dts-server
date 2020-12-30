@@ -1,6 +1,7 @@
 package com.elab.data.dts.sender.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.elab.data.dts.config.props.DTSProperties;
 import com.elab.data.dts.model.DMLData;
 import com.elab.data.dts.model.TableData;
 import com.elab.data.dts.sender.ISendProducer;
@@ -15,6 +16,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.util.concurrent.ListenableFuture;
 
+import java.util.Map;
+
 /**
  * @Module 抽象类
  * @Description kafka发送统一管理
@@ -28,6 +31,9 @@ public abstract class AbstractKafkaSender implements ISendProducer {
     private KafkaTemplate<String, String> kafkaTemplate;
 
     @Autowired
+    protected DTSProperties dtsProperties;
+
+    @Autowired
     protected KafkaProperties kafkaProperties;
 
     private Integer defaultPartition = 12;
@@ -35,7 +41,7 @@ public abstract class AbstractKafkaSender implements ISendProducer {
     protected abstract String topic();
 
     @Override
-    public void send(TableData tableData) throws Exception {
+    public void send(TableData tableData) {
 //        Map<String, String> properties = kafkaProperties.getProperties();
 
 //        String partition = properties.get("partition");
@@ -59,14 +65,17 @@ public abstract class AbstractKafkaSender implements ISendProducer {
 
         String defaultTopic = topic();
         String key = null;
+        Integer partition = null;
         if (tableData instanceof DMLData) {
             DMLData dmlData = (DMLData) tableData;
+            Map<String, Integer> tablePartitionMap = dtsProperties.getTablePartitionMap();
+            partition = tablePartitionMap.get(dmlData.getTableName());
             String id = dmlData.getId() == null ? "" : dmlData.getId();
             key = tableData.getTableName() + id;
         }
 
         ProducerRecord<String, String> kafkaMessage = new ProducerRecord<String, String>(defaultTopic,
-                null, System.currentTimeMillis(), key, JSON.toJSONString(tableData));
+                partition, System.currentTimeMillis(), key, JSON.toJSONString(tableData));
         try {
             ListenableFuture<SendResult<String, String>> listenableFuture = kafkaTemplate.send(kafkaMessage);
             SendResult<String, String> sendResult = listenableFuture.get();

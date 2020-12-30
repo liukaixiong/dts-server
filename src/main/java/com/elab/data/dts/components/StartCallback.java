@@ -1,4 +1,4 @@
-package com.elab.data.dts.compont;
+package com.elab.data.dts.components;
 
 import com.elab.data.dts.boot.Boot;
 import com.elab.data.dts.common.RecordListener;
