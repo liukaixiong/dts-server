@@ -104,19 +104,19 @@
 ```yaml
 spring:
   dts:
-    initial-checkpoint-name: 1596440543    # 注意这里是秒的时间戳，为空的话默认是当前时间戳。第一次启动的时候会参考这个时间戳，后续配合use-config-checkpoint-name属性以文件或者kafka的存储位点为主,
-    use-config-checkpoint-name: false      # 强制使用当前位点，这里使用的时候要特别注意，不是非得回滚到指定位点，不要用true，否则重启的时候会重复消费，通常用来回到特定时间点的数据进行消费
-    subscribe-mode-name: subscribe         # subscribe表示多机主备,如果有多台,只有其中一台会消费,其他只是等待这个消费挂掉,后续补上,起到容灾作用
+    initial-checkpoint-name: 1596440543           # 注意这里是秒的时间戳，为空的话默认是当前时间戳。第一次启动的时候会参考这个时间戳，后续配合use-config-checkpoint-name属性以文件或者kafka的存储位点为主,
+    use-config-checkpoint-name: false             # 强制使用当前位点，这里使用的时候要特别注意，不是非得回滚到指定位点，不要用true，否则重启的时候会重复消费，通常用来回到特定时间点的数据进行消费
+    subscribe-mode-name: subscribe                # subscribe表示多机主备,如果有多台,只有其中一台会消费,其他只是等待这个消费挂掉,后续补上,起到容灾作用
     max-poll-records: 100
-    include-data-info:          # 数据过滤  包含数据信息
-      marketing_db_prod: [ all,abc ]  # marketing_db_prod : 对应的库名    [ all,abc ] 对应的表名 : all 代表所有表, abc 代表具体的表名
+    include-data-info:                            # 数据过滤  包含数据信息
+      marketing_db_prod: [ all,abc ]              # marketing_db_prod : 对应的库名    [ all,abc ] 对应的表名 : all 代表所有表, abc 代表具体的表名
       # 如果有多个的话可以继续添加例如(marketing_db_prod2: [ all,abc ])
-    exclude-data-info:        # 排除具体的表 : A , B ,C 代表3个表名, marketing_db : 代表库名
+    exclude-data-info:                            # 排除具体的表 : A , B ,C 代表3个表名, marketing_db : 代表库名
       marketing_db: [ A , B , C]
-    exclude-table-change-field: # 过滤掉binlog中发生改变的字段
-      all: [updated,updator]    # 过滤掉所有表的发生改变的字段
-      c_user_info: [ updated ]  # 过滤掉指定表的发生改变的字段
-    table-partition-map:        # 表和分区进行绑定
+    exclude-table-change-field:                   # 过滤掉binlog中发生改变的字段
+      all: [updated,updator]                      # 过滤掉所有表的发生改变的字段
+      c_user_info: [ updated ]                    # 过滤掉指定表的发生改变的字段
+    table-partition-map:                          # 表和分区进行绑定,特定的表直接绑定固定的kafka分区
       content_materials_label_rlat_info: 6
 ```
 
