@@ -67,6 +67,14 @@ public class DataUtils {
     }
 
     @Test
+    public void testTableName2() {
+        String sql = "alter table c_report_log  MODIFY COLUMN `remark` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '备注',\n" +
+                "MODIFY COLUMN `report_desc` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '报备添加的备注'";
+        parseTableName(sql);
+    }
+
+
+    @Test
     public void testCreateTable() {
         String sql = "CREATE TABLE IF NOT EXISTS app_dm_data_center_mrk_data_qr_code_offline_d\n" +
                 "(\n" +

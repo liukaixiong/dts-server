@@ -33,6 +33,7 @@ public class Checkpoint {
         return topicPartition;
     }
 
+    @Override
     public String toString() {
         return "Checkpoint[ topicPartition: " + topicPartition + "timestamp: " + timeStamp + ", offset: " + offset + ", info: "  + info + "]";
     }

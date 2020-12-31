@@ -36,7 +36,7 @@ public abstract class AbstractKafkaSender implements ISendProducer {
     @Autowired
     protected KafkaProperties kafkaProperties;
 
-    private Integer defaultPartition = 12;
+//    private Integer defaultPartition = 12;
 
     protected abstract String topic();
 

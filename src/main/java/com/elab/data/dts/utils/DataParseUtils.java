@@ -314,8 +314,11 @@ public class DataParseUtils {
             return null;
         }
 
+        // 上面可能产生千奇百怪的情况,只能这里做后续过滤
         if (tableName.indexOf("`") > -1) {
             tableName = getTableNameBySql(tableName, "`", "`");
+        } else if (tableName.indexOf("\n") > -1) {
+            tableName = tableName.split("\n")[0];
         }
 
         return tableName.replaceAll("`", "");
