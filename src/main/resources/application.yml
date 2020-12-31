@@ -16,8 +16,14 @@ spring:
 #    use-config-checkpoint-name: false       # 强制使用当前位点，这里使用的时候要特别注意，不是非得回滚到指定位点，不要用true，否则重启的时候会重复消费
 #    subscribe-mode-name: subscribe         # subscribe表示多机主备
 #    max-poll-records: 100
-#     include-data-info: # 数据过滤  包含数据信息
-#        marketing_db_prod: [ all,abc ]  # marketing_db_prod : 对应的库名    [ all,abc ] 对应的表名 : all 代表所有表, abc 代表具体的表名
+#    include-data-info: # 数据过滤  包含数据信息
+#      marketing_db_prod: [ all,abc ]  # marketing_db_prod : 对应的库名    [ all,abc ] 对应的表名 : all 代表所有表, abc 代表具体的表名
+#    exclude-data-info:
+#      marketing_db: [ t_judge_qr_code , mng_http_failure_data , t_excel_import_log , sms_log , t_component_info_online ,i_tfb ]
+#      exclude-table-change-field:
+#        all: [ updated,updator ]
+#      table-partition-map:
+#        content_materials_label_rlat_info: 6
 #  kafka:
 #    bootstrap-servers: xxxx:9093,xxxx:9093,xxxx:9093
 ##      trust-store-password: KafkaOnsClient

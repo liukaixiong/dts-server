@@ -1,1 +1,1 @@
-{"groupID":"temp_jinmao_data","streamCheckpoint":[{"partition":0,"offset":259022264,"topic":"cn_shanghai_rm_uf67pg02knl361sn2_rdsdt_dtsacct","timestamp":1602819306,"info":"1602819306"}]}
+{"groupID":"dev_marketing_data","streamCheckpoint":[{"partition":0,"offset":36049570,"topic":"cn_shanghai_i_uf612f6me89vfzo6a4de_3306_dts_server","timestamp":1609327471,"info":"1609327471"}]}
