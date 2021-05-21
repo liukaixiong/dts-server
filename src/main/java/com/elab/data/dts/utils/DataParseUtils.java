@@ -26,8 +26,8 @@ import java.util.*;
 public class DataParseUtils {
     private static final FieldConverter FIELD_CONVERTER = FieldConverter.getConverter("mysql", null);
     private static Logger LOG = LoggerFactory.getLogger(DataParseUtils.class);
-    public static final FastDateFormat ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT
-            = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss");
+    public static final FastDateFormat ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT =
+        FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss");
     private static Class[] fieldClass = new Class[256];
 
     static {
@@ -94,7 +94,7 @@ public class DataParseUtils {
      * @return
      */
     public static Map<String, FieldData> parseUpdateField(Record record, List<String> changeFieldList) {
-        List<Field> fields = (List<Field>) record.getFields();
+        List<Field> fields = (List<Field>)record.getFields();
         FieldEntryHolder[] fieldArray = getFieldEntryHolder(record);
         FieldEntryHolder before = fieldArray[0];
         FieldEntryHolder after = fieldArray[1];
@@ -141,7 +141,6 @@ public class DataParseUtils {
                     }
                 }
 
-
                 fieldDataMap.put(field.getName(), fieldData);
             }
         }
@@ -159,7 +158,6 @@ public class DataParseUtils {
 
         return text;
     }
-
 
     public static void parseDatabaseInfo(Record record, TableData tableData) {
         String dbName = null;
@@ -243,13 +241,12 @@ public class DataParseUtils {
         return ddlData;
     }
 
-
     private static FieldEntryHolder[] getFieldEntryHolder(Record record) {
         // this is a simple impl, may exist unhandled situation
         FieldEntryHolder[] fieldArray = new FieldEntryHolder[2];
 
-        fieldArray[0] = new FieldEntryHolder((List<Object>) record.getBeforeImages());
-        fieldArray[1] = new FieldEntryHolder((List<Object>) record.getAfterImages());
+        fieldArray[0] = new FieldEntryHolder((List<Object>)record.getBeforeImages());
+        fieldArray[1] = new FieldEntryHolder((List<Object>)record.getAfterImages());
 
         return fieldArray;
     }
@@ -317,11 +314,11 @@ public class DataParseUtils {
         // 上面可能产生千奇百怪的情况,只能这里做后续过滤
         if (tableName.indexOf("`") > -1) {
             tableName = getTableNameBySql(tableName, "`", "`");
-        } else if (tableName.indexOf("\n") > -1) {
-            tableName = tableName.split("\n")[0];
         }
-
-        return tableName.replaceAll("`", "");
+        if (tableName.indexOf("\r") > -1 || tableName.indexOf("\n") > -1) {
+            tableName = tableName.replaceAll("\r\n.+", "").replaceAll("\n.+", "");
+        }
+        return tableName.replaceAll("`", "").trim();
     }
 
     /**
@@ -341,6 +338,5 @@ public class DataParseUtils {
         String tableName = sql.substring(startIndex, endIndex);
         return tableName;
     }
-
 
 }

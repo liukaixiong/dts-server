@@ -73,6 +73,18 @@ public class DataUtils {
         parseTableName(sql);
     }
 
+    @Test
+    public void testCreatedTable(){
+        String sql = "create table `temp_jinmao_data`.`c_follow` like `marketing_db`.`c_follow`";
+        parseTableName(sql);
+    }
+
+    @Test
+    public void testAddField(){
+        String sql ="alter table c_mobile_large\r\n" + "add column lolol4 int(11) null comment '123' after STATUS";
+        parseTableName(sql);
+    }
+
 
     @Test
     public void testCreateTable() {
@@ -108,6 +120,7 @@ public class DataUtils {
     private void parseTableName(String sql) {
         String tableName = DataParseUtils.getDDLTableName(sql);
         System.out.println(tableName);
+        System.out.println("---------------------");
         Assert.assertTrue(tableName != null);
     }
 
